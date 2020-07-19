@@ -2,6 +2,8 @@ Ion Examples
 ===
 A work-in-progress suite of code use examples for [Ion Conference Server](https://github.com/pion/ion)
 
+**SEEKING CODE REVIEWS** - hi, i (@leewardbound) am very new to `golang` and i likely made amateur mistakes in all of these examples! if you enjoy using these tools, please help make them better, and submit your feedback or improvements!
+
 join-from-disk
 ===
 join an ion room from a file on the disk; stable (used in `ion-e2e-test`)
