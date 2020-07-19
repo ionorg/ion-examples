@@ -7,6 +7,7 @@ A work-in-progress suite of code use examples for [Ion Conference Server](https:
 join-from-disk
 ===
 join an ion room from a file on the disk; stable (used in `ion-e2e-test`)
+
 **DOCKER NOTE**: Has been observed to hang forever inside `ubuntu:20.04` docker containers, use `20.10` instead
 
 Example:
@@ -16,6 +17,7 @@ Example:
 join-from-screenshare
 ===
 join an ion room sharing the entire screen; stable
+
 **LINUX ONLY**: see  [pion/mediadevices](https://github.com/pion/mediadevices)
 
 Example:
@@ -24,6 +26,7 @@ Example:
 join-from-webcam
 ===
 join an ion room sharing a webcam device; **work-in-progress** (please open issues if it doesn't run for you)
+
 **COMPATABILITY**: see  [pion/mediadevices](https://github.com/pion/mediadevices)
 
 Example:
