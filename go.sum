@@ -113,6 +113,8 @@ github.com/inconshreveable/mousetrap v1.0.0 h1:Z8tu5sraLXCXIcARxBp/8cbvlwVa7Z1NH
 github.com/inconshreveable/mousetrap v1.0.0/go.mod h1:PxqpIevigyE2G7u3NXJIT2ANytuPF1OarO4DADm73n8=
 github.com/jfreymuth/pulse v0.0.0-20200608153616-84b2d752b9d4 h1:hqRsCQVbjl5GPWT9F+q5esXRiFPqc2WqbL5+qb5P6rk=
 github.com/jfreymuth/pulse v0.0.0-20200608153616-84b2d752b9d4/go.mod h1:cpYspI6YljhkUf1WLXLLDmeaaPFc3CnGLjDZf9dZ4no=
+github.com/jfreymuth/pulse v0.0.0-20200817093420-a82ccdb5e8aa h1:qUZIj5+D3UDgfshNe8Cz/9maOxe8ddt43qwQH9vEEC8=
+github.com/jfreymuth/pulse v0.0.0-20200817093420-a82ccdb5e8aa/go.mod h1:cpYspI6YljhkUf1WLXLLDmeaaPFc3CnGLjDZf9dZ4no=
 github.com/jonboulle/clockwork v0.1.0/go.mod h1:Ii8DK3G1RaLaWxj9trq07+26W01tbo22gdxWY5EU2bo=
 github.com/json-iterator/go v1.1.6/go.mod h1:+SdeFBvtyEkXs7REEP0seUULqWtbJapLOCVDaaPEHmU=
 github.com/jstemmer/go-junit-report v0.0.0-20190106144839-af01ea7f8024/go.mod h1:6v2b51hI/fHJwM22ozAgKL4VKDeJcHhJFhtBdhmNjmU=
@@ -127,6 +129,8 @@ github.com/kr/pty v1.1.1/go.mod h1:pFQYn66WHrOpPYNljwOMqo10TkYh1fy3cYio2l3bCsQ=
 github.com/kr/text v0.1.0/go.mod h1:4Jbv+DJW3UT/LiOwJeYQe1efqtUx/iVham/4vfdArNI=
 github.com/lherman-cs/opus v0.0.0-20200223204610-6a4b98199ea4 h1:2ydMA2KbxRkYmIw3R8Me8dn90bejxBR4MKYXJ5THK3I=
 github.com/lherman-cs/opus v0.0.0-20200223204610-6a4b98199ea4/go.mod h1:v9KQvlDYMuvlwniumBVMlrB0VHQvyTgxNvaXjPmTmps=
+github.com/lherman-cs/opus v0.0.0-20200925065115-26ea9d322d39 h1:WEYmSwg/uoPVmfmpXWPYplb1UUx/Jr4TXGNrPaI8Cj4=
+github.com/lherman-cs/opus v0.0.0-20200925065115-26ea9d322d39/go.mod h1:v9KQvlDYMuvlwniumBVMlrB0VHQvyTgxNvaXjPmTmps=
 github.com/lucas-clemente/quic-go v0.7.1-0.20190401152353-907071221cf9 h1:tbuodUh2vuhOVZAdW3NEUvosFHUMJwUNl7jk/VSEiwc=
 github.com/lucas-clemente/quic-go v0.7.1-0.20190401152353-907071221cf9/go.mod h1:PpMmPfPKO9nKJ/psF49ESTAGQSdfXxlg1otPbEB2nOw=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
@@ -184,6 +188,8 @@ github.com/pion/mediadevices v0.0.0-20200714025913-2f437a5cc6cc h1:DRDmPGdO/q/L3
 github.com/pion/mediadevices v0.0.0-20200714025913-2f437a5cc6cc/go.mod h1:hCCV6T+xENmv2LioHj3qF086xTaE4VnG1CK6ZBI3S7w=
 github.com/pion/mediadevices v0.0.0-20200803175626-cfdb2221a47c h1:hD37UfI7GpSXRocWl630Rabs14wEKBHEOELtMVZHSeQ=
 github.com/pion/mediadevices v0.0.0-20200803175626-cfdb2221a47c/go.mod h1:egDO6pEVRWjU+/WWf3MWjJVVO7s3jx0XrCTHyD4zsgI=
+github.com/pion/mediadevices v0.0.0-20201001231759-943906e125d9 h1:W2uUDDhCtsh9lzmrAl30icrmnI/hSi3aKGHwQJZnNhQ=
+github.com/pion/mediadevices v0.0.0-20201001231759-943906e125d9/go.mod h1:R7dazjIyWKMCDZrAm8xHvh1zcUi0mTU9p0ARUB1AAmU=
 github.com/pion/quic v0.1.1 h1:D951FV+TOqI9A0rTF7tHx0Loooqz+nyzjEyj8o3PuMA=
 github.com/pion/quic v0.1.1/go.mod h1:zEU51v7ru8Mp4AUBJvj6psrSth5eEFNnVQK5K48oV3k=
 github.com/pion/randutil v0.0.0/go.mod h1:XcJrSMMbbMRhASFVOlj/5hQial/Y8oH/HVo7TBZq+j8=
@@ -324,6 +330,8 @@ golang.org/x/image v0.0.0-20200618115811-c13761719519 h1:1e2ufUJNM3lCHEY5jIgac/7
 golang.org/x/image v0.0.0-20200618115811-c13761719519/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
 golang.org/x/image v0.0.0-20200801110659-972c09e46d76 h1:U7GPaoQyQmX+CBRWXKrvRzWTbd+slqeSh8uARsIyhAw=
 golang.org/x/image v0.0.0-20200801110659-972c09e46d76/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
+golang.org/x/image v0.0.0-20200927104501-e162460cd6b5 h1:QelT11PB4FXiDEXucrfNckHoFxwt8USGY1ajP1ZF5lM=
+golang.org/x/image v0.0.0-20200927104501-e162460cd6b5/go.mod h1:FeLwcggjj3mMvU+oOTbSwawSJRM1uh48EjtB4UJZlP0=
 golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
 golang.org/x/lint v0.0.0-20190227174305-5b3e6a55c961/go.mod h1:wehouNa3lNwaWXcvxsM5YxQ5yQlVC4a0KAMCusXpPoU=
 golang.org/x/lint v0.0.0-20190301231843-5614ed5bae6f/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
@@ -389,6 +397,8 @@ golang.org/x/sys v0.0.0-20200625212154-ddb9806d33ae/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20200724161237-0e2f3a69832c/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/sys v0.0.0-20200728102440-3e129f6d46b1 h1:sIky/MyNRSHTrdxfsiUSS4WIAMvInbeXljJz+jDjeYE=
 golang.org/x/sys v0.0.0-20200728102440-3e129f6d46b1/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
+golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a h1:i47hUS795cOydZI4AwJQCKXOr4BvxzvikwDoDtHhP2Y=
+golang.org/x/sys v0.0.0-20200831180312-196b9ba8737a/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.1-0.20180807135948-17ff2d5776d2/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.2 h1:tW2bmiBqwgJj/UpqtC8EpXEZVYOwU0yG4iWbprSVAcs=
