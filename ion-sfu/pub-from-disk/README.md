@@ -6,15 +6,15 @@ pub-from-disk demonstrates how to send video and/or audio to an ion-sfu from fil
 
 ### Create IVF named `output.ivf` that contains a VP8 track and/or `output.ogg` that contains a Opus track
 
-```
+```bash
 ffmpeg -i $INPUT_FILE -g 30 output.ivf
 ffmpeg -i $INPUT_FILE -c:a libopus -page_duration 20000 -vn output.ogg
 ```
 
 ### Download pub-from-disk
 
-```
-go get github.com/pion/ion-sfu/examples/pub-from-disk
+```bash
+go get github.com/pion/ion-examples/ion-sfu/pub-from-disk
 ```
 
 ### Run play-from-disk
