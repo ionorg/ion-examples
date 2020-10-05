@@ -6,8 +6,8 @@ pub-from-browser demonstrates how you can publish a stream to ion-sfu from a bro
 
 ### Download pub-from-browser
 
-```
-go get github.com/pion/ion-sfu/examples/pub-from-browser
+```bash
+go get github.com/pion/ion-examples/ion-sfu/pub-from-browser
 ```
 
 ### Open pub-from-browser example page
