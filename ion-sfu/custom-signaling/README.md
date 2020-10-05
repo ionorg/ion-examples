@@ -8,7 +8,7 @@ custom-signaling demonstrates how you can publish to an ion-sfu instance from th
 
 #### Run the example
 
-Run `go build && ./custom-signaling -c ../../config.toml`
+Run `go build && ./custom-signaling -c ./config.toml`
 
 ### Open custom-signaling example page
 

@@ -16,7 +16,7 @@ import (
 	websocketjsonrpc2 "github.com/sourcegraph/jsonrpc2/websocket"
 	"github.com/spf13/viper"
 
-	"github.com/pion/ion-sfu/examples/internal/crypto"
+	"github.com/pion/ion-examples/ion-sfu/internal/crypto"
 	sfu "github.com/pion/ion-sfu/pkg"
 	"github.com/pion/ion-sfu/pkg/log"
 )

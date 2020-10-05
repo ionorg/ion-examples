@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/pion/webrtc/v3"
 	"io"
 	"log"
 	"net/url"
