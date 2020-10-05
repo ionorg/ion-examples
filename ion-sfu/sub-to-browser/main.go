@@ -10,7 +10,7 @@ import (
 	"os"
 
 	sfu "github.com/pion/ion-sfu/cmd/server/grpc/proto"
-	"github.com/pion/ion-sfu/examples/internal/signal"
+	"github.com/pion/ion-examples/ion-sfu/internal/signal"
 	"github.com/pion/webrtc/v3"
 	"google.golang.org/grpc"
 )
