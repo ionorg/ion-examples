@@ -1,0 +1,26 @@
+$spacer: 8px;
+$color-grey-100: #0b1215;
+$color-grey-200: #131f24;
+$color-grey-400: #21373f;
+$color-grey-800: #416d7e;
+
+$color-brand: #ffdb67;
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: $color-grey-100;
+}
+
+button {
+    border: 0;
+    background: $color-grey-400;
+    color: #ccc;
+    padding: $spacer;
+}
+
+// Import Vue component styling using the glob loader.
+@import '../../components/**/*.scss'; /* stylelint-disable-line */

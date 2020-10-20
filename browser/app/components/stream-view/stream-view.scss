@@ -1,0 +1,12 @@
+.c-stream-view {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-content: flex-start;
+    height: 100%;
+
+
+    video {
+        width: 300px;
+    }
+}

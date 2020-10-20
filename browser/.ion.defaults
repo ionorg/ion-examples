@@ -1,0 +1,9 @@
+{
+    "client": {
+        "endpoint": "ws://localhost:7000/ws",
+        "sid": "icestream",
+        "stun": [
+            "stun:stun.l.google.com:19302"
+        ]
+    }
+}

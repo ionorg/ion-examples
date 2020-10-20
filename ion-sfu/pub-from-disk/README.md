@@ -1,26 +1,20 @@
-# pub-from-disk
+# Pub-from-disk
 
-pub-from-disk demonstrates how to send video and/or audio to an ion-sfu from files on disk.
+This example demonstrates how to send video and/or audio to an ion-sfu from
+files on disk. The example expect an IVF file named `output.ivf` containing a
+VP8 track and/or a `output.ogg` that contains a Opus track.
 
-## Instructions
-
-### Create IVF named `output.ivf` that contains a VP8 track and/or `output.ogg` that contains a Opus track
-
-```bash
-ffmpeg -i $INPUT_FILE -g 30 output.ivf
-ffmpeg -i $INPUT_FILE -c:a libopus -page_duration 20000 -vn output.ogg
-```
-
-### Download pub-from-disk
+## Usage
 
 ```bash
-go get github.com/pion/ion-examples/ion-sfu/pub-from-disk
+cd ion-examples/ion-sfu/pub-from-disk
+go build -o pub main.go
+wget -c https://ia801602.us.archive.org/11/items/Rick_Astley_Never_Gonna_Give_You_Up/Rick_Astley_Never_Gonna_Give_You_Up.mp4 -O output.mp4
+ffmpeg -i output.mp4 -g 30 output.ivf
+ffmpeg -i output.mp4 -c:a libopus -page_duration 20000 -vn output.ogg
+# Use pub <sfu-sid>
+./pub icestream
 ```
 
-### Run play-from-disk
-
-The `output.ivf` you created should be in the same directory as `pub-from-disk`.
-
-Run `pub-from-disk $yourroom`
-
-Congrats, you are now publishing video to the ion-sfu! You can validate this by taking a look at the sfu logs. Now start building something cool!
+Congrats, you are now publishing video to the ion-sfu! You should see the video
+play in the browser.
