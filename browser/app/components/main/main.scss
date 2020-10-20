@@ -1,0 +1,11 @@
+.c-main {
+    display: flex;
+    margin: 0 auto;
+    overflow: auto;
+
+    .widget {
+        background: $color-grey-200;
+        border: 2px solid $color-grey-100;
+        margin: $spacer;
+    }
+}
