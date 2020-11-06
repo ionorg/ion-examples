@@ -13,7 +13,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/gorilla/websocket"
 	"github.com/pion/mediadevices"
-	"github.com/pion/mediadevices/pkg/codec"
 	"github.com/pion/mediadevices/pkg/codec/vpx"
 	"github.com/pion/mediadevices/pkg/frame"
 	"github.com/pion/mediadevices/pkg/prop"
@@ -94,9 +93,17 @@ func main() {
 	// Create a new RTCPeerConnection
 	mediaEngine := webrtc.MediaEngine{}
 
-	mediaEngine.RegisterCodec(webrtc.NewRTPVP8Codec(webrtc.DefaultPayloadTypeVP8, 90000))
-	mediaEngine.RegisterCodec(webrtc.NewRTPOpusCodec(webrtc.DefaultPayloadTypeOpus, 48000))
+	vpxParams, err := vpx.NewVP8Params()
+	if err != nil {
+		panic(err)
+	}
+	vpxParams.BitRate = 500_000 // 500kbps
 
+	codecSelector := mediadevices.NewCodecSelector(
+		mediadevices.WithVideoEncoders(&vpxParams),
+	)
+
+	codecSelector.Populate(&mediaEngine)
 	api := webrtc.NewAPI(webrtc.WithMediaEngine(mediaEngine))
 	peerConnection, err = api.NewPeerConnection(config)
 	if err != nil {
@@ -108,25 +115,21 @@ func main() {
 
 	go readMessage(c, done)
 
-	// Get user media
-	md := mediadevices.NewMediaDevices(peerConnection)
-
 	vp8Params, err := vpx.NewVP8Params()
 	if err != nil {
 		panic(err)
 	}
 	vp8Params.BitRate = 100000 // 100kbps
 
-	fmt.Println(md.EnumerateDevices())
+	fmt.Println(mediadevices.EnumerateDevices())
 
-	s, err := md.GetUserMedia(mediadevices.MediaStreamConstraints{
+	s, err := mediadevices.GetUserMedia(mediadevices.MediaStreamConstraints{
 		Video: func(c *mediadevices.MediaTrackConstraints) {
 			c.FrameFormat = prop.FrameFormat(frame.FormatYUYV)
-			c.Enabled = true
 			c.Width = prop.Int(640)
 			c.Height = prop.Int(480)
-			c.VideoEncoderBuilders = []codec.VideoEncoderBuilder{&vp8Params}
 		},
+		Codec: codecSelector,
 	})
 
 	if err != nil {
@@ -134,16 +137,22 @@ func main() {
 	}
 
 	for _, tracker := range s.GetTracks() {
-		t := tracker.Track()
 		tracker.OnEnded(func(err error) {
-			fmt.Printf("Track (ID: %s, Label: %s) ended with error: %v\n",
-				t.ID(), t.Label(), err)
+			fmt.Printf("Track (ID: %s) ended with error: %v\n",
+				tracker.ID(), err)
 		})
-		_, err = peerConnection.AddTransceiverFromTrack(t,
+
+		webrtcTrack, err := tracker.Bind(peerConnection)
+		if err != nil {
+			panic(err)
+		}
+
+		_, err = peerConnection.AddTransceiverFromTrack(webrtcTrack,
 			webrtc.RtpTransceiverInit{
 				Direction: webrtc.RTPTransceiverDirectionSendonly,
 			},
 		)
+
 		if err != nil {
 			panic(err)
 		}
