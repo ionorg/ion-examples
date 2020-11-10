@@ -18,7 +18,7 @@ import (
 
 	"github.com/pion/ion-examples/ion-sfu/internal/crypto"
 	sfu "github.com/pion/ion-sfu/pkg"
-	"github.com/pion/ion-sfu/pkg/log"
+	"github.com/pion/ion-log"
 )
 
 var (
