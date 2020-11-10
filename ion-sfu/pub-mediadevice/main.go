@@ -115,12 +115,6 @@ func main() {
 
 	go readMessage(c, done)
 
-	vp8Params, err := vpx.NewVP8Params()
-	if err != nil {
-		panic(err)
-	}
-	vp8Params.BitRate = 100000 // 100kbps
-
 	fmt.Println(mediadevices.EnumerateDevices())
 
 	s, err := mediadevices.GetUserMedia(mediadevices.MediaStreamConstraints{
