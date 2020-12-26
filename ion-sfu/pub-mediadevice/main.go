@@ -1,4 +1,3 @@
-// Package pub-mediadevice demonstrates how you can read a camera using the Pion Mediadevice library and publish the stream to the ion-sfu server
 package main
 
 import (
@@ -16,7 +15,7 @@ import (
 	"github.com/pion/mediadevices/pkg/codec/vpx"
 	"github.com/pion/mediadevices/pkg/frame"
 	"github.com/pion/mediadevices/pkg/prop"
-	"github.com/pion/webrtc/v2"
+	"github.com/pion/webrtc/v3"
 	"github.com/sourcegraph/jsonrpc2"
 
 	// Note: If you don't have a camera or microphone or your adapters are not supported,
@@ -28,7 +27,13 @@ import (
 )
 
 type Candidate struct {
+	Target    int                   `json:"target"`
 	Candidate *webrtc.ICECandidate `json:candidate`
+}
+
+type ResponseCandidate struct {
+	Target    int                   `json:"target"`
+	Candidate *webrtc.ICECandidateInit `json:candidate`
 }
 
 // SendOffer object to send to the sfu over Websockets
@@ -45,7 +50,7 @@ type SendAnswer struct {
 
 // TrickleResponse received from the sfu server
 type TrickleResponse struct {
-	Params *webrtc.ICECandidateInit `json:params`
+	Params ResponseCandidate				`json:params`
 	Method string                   `json:method`
 }
 
@@ -82,7 +87,7 @@ func main() {
 				URLs: []string{"stun:stun.l.google.com:19302"},
 			},
 			/*{
-				URLs:       []string{"turn:TURN_IP:3478?transport=tcp"},
+				URLs:       []string{"turn:TURN_IP:3478"},
 				Username:   "username",
 				Credential: "password",
 			},*/
@@ -104,7 +109,7 @@ func main() {
 	)
 
 	codecSelector.Populate(&mediaEngine)
-	api := webrtc.NewAPI(webrtc.WithMediaEngine(mediaEngine))
+	api := webrtc.NewAPI(webrtc.WithMediaEngine(&mediaEngine))
 	peerConnection, err = api.NewPeerConnection(config)
 	if err != nil {
 		panic(err)
@@ -119,7 +124,7 @@ func main() {
 
 	s, err := mediadevices.GetUserMedia(mediadevices.MediaStreamConstraints{
 		Video: func(c *mediadevices.MediaTrackConstraints) {
-			c.FrameFormat = prop.FrameFormat(frame.FormatYUYV)
+			c.FrameFormat = prop.FrameFormat(frame.FormatYUY2)
 			c.Width = prop.Int(640)
 			c.Height = prop.Int(480)
 		},
@@ -130,23 +135,16 @@ func main() {
 		panic(err)
 	}
 
-	for _, tracker := range s.GetTracks() {
-		tracker.OnEnded(func(err error) {
+	for _, track := range s.GetTracks() {
+		track.OnEnded(func(err error) {
 			fmt.Printf("Track (ID: %s) ended with error: %v\n",
-				tracker.ID(), err)
+				track.ID(), err)
 		})
-
-		webrtcTrack, err := tracker.Bind(peerConnection)
-		if err != nil {
-			panic(err)
-		}
-
-		_, err = peerConnection.AddTransceiverFromTrack(webrtcTrack,
+		_, err = peerConnection.AddTransceiverFromTrack(track,
 			webrtc.RtpTransceiverInit{
 				Direction: webrtc.RTPTransceiverDirectionSendonly,
 			},
 		)
-
 		if err != nil {
 			panic(err)
 		}
@@ -166,6 +164,7 @@ func main() {
 		if candidate != nil {
 			candidateJSON, err := json.Marshal(&Candidate{
 				Candidate: candidate,
+				Target: 0,
 			})
 
 			params := (*json.RawMessage)(&candidateJSON)
@@ -235,8 +234,6 @@ func readMessage(connection *websocket.Conn, done chan struct{}) {
 		json.Unmarshal(message, &response)
 
 		if response.Id == connectionID {
-			// TODO: Handle negotiation needed event - Needed for Firefox
-
 			result := *response.Result
 			remoteDescription = response.Result
 			if err := peerConnection.SetRemoteDescription(result); err != nil {
@@ -279,11 +276,21 @@ func readMessage(connection *websocket.Conn, done chan struct{}) {
 			connection.WriteMessage(websocket.TextMessage, messageBytes)
 		} else if response.Method == "trickle" {
 			var trickleResponse TrickleResponse
+
+			var prettyJSON bytes.Buffer
+			error := json.Indent(&prettyJSON, message, "", "\t")
+			if error != nil {
+				log.Println("JSON parse error: ", error)
+				return
+			}
+			log.Println("CSP Violation:", string(prettyJSON.Bytes()))
+
 			if err := json.Unmarshal(message, &trickleResponse); err != nil {
+				log.Println("Unmarshaling trickle")
 				log.Fatal(err)
 			}
 
-			err := peerConnection.AddICECandidate(*trickleResponse.Params)
+			err := peerConnection.AddICECandidate(*trickleResponse.Params.Candidate)
 
 			if err != nil {
 				log.Fatal(err)
