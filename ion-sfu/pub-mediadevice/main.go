@@ -50,7 +50,7 @@ type SendAnswer struct {
 
 // TrickleResponse received from the sfu server
 type TrickleResponse struct {
-	Params ResponseCandidate				`json:params`
+	Params *webrtc.ICECandidateInit	`json:params`
 	Method string                   `json:method`
 }
 
@@ -277,20 +277,12 @@ func readMessage(connection *websocket.Conn, done chan struct{}) {
 		} else if response.Method == "trickle" {
 			var trickleResponse TrickleResponse
 
-			var prettyJSON bytes.Buffer
-			error := json.Indent(&prettyJSON, message, "", "\t")
-			if error != nil {
-				log.Println("JSON parse error: ", error)
-				return
-			}
-			log.Println("CSP Violation:", string(prettyJSON.Bytes()))
-
 			if err := json.Unmarshal(message, &trickleResponse); err != nil {
 				log.Println("Unmarshaling trickle")
 				log.Fatal(err)
 			}
 
-			err := peerConnection.AddICECandidate(*trickleResponse.Params.Candidate)
+			err := peerConnection.AddICECandidate(*trickleResponse.Params)
 
 			if err != nil {
 				log.Fatal(err)
