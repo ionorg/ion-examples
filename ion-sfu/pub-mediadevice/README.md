@@ -18,4 +18,4 @@ When that is done, you can start the backend that sends the camera image using t
 go run main.go -a localhost:7000
 ```
 
-The camera stream should now be sent to the `ion-sfu` server. You can verify this by looking at your `ion-sfu` server's logs or by reading the stream using the provided frontend that can be accessed via [jsfiddle](https://jsfiddle.net/mdtvuprj/).
+The camera stream should now be sent to the `ion-sfu` server. You can verify this by looking at your `ion-sfu` server's logs or by reading the stream using the provided frontend that can be accessed by opening the included HTML file in a browser.
