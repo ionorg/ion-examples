@@ -50,7 +50,7 @@ type SendAnswer struct {
 
 // TrickleResponse received from the sfu server
 type TrickleResponse struct {
-	Params *webrtc.ICECandidateInit	`json:params`
+	Params ResponseCandidate	`json:params`
 	Method string                   `json:method`
 }
 
@@ -278,11 +278,10 @@ func readMessage(connection *websocket.Conn, done chan struct{}) {
 			var trickleResponse TrickleResponse
 
 			if err := json.Unmarshal(message, &trickleResponse); err != nil {
-				log.Println("Unmarshaling trickle")
 				log.Fatal(err)
 			}
 
-			err := peerConnection.AddICECandidate(*trickleResponse.Params)
+			err := peerConnection.AddICECandidate(*trickleResponse.Params.Candidate)
 
 			if err != nil {
 				log.Fatal(err)
