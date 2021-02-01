@@ -257,6 +257,8 @@ func main() {
 		}
 	})
 
+	candidates := []webrtc.ICECandidateInit{}
+
 	// Handle sfu stream messages
 	for {
 		res, err := client.Recv()
@@ -300,11 +302,18 @@ func main() {
 		case *sfu.SignalReply_Description:
 			var desc webrtc.SessionDescription
 			err := json.Unmarshal(payload.Description, &desc)
+			continue
 			if desc.Type == webrtc.SDPTypeOffer {
 				log.Debugf("got offer: %s", string(desc.SDP))
 
 				// Peer exists, renegotiating existing peer
 				err = peerConnection.SetRemoteDescription(desc)
+
+				for _, c := range candidates { // candidates that were received before offer
+					if err := peerConnection.AddICECandidate(c); err != nil {
+						log.Errorf("Add publisher ice candidate to peer err: %v", err)
+					}
+				}
 				if err != nil {
 					log.Errorf("negotiate error %s", err)
 					continue
@@ -349,9 +358,13 @@ func main() {
 			log.Debugf("got candidate: %v", string(payload.Trickle.Init))
 			var candidate webrtc.ICECandidateInit
 			_ = json.Unmarshal([]byte(payload.Trickle.Init), &candidate)
-			err := peerConnection.AddICECandidate(candidate)
-			if err != nil {
-				log.Errorf("error adding ice candidate: %e", err)
+			if peerConnection.RemoteDescription() != nil {
+				err := peerConnection.AddICECandidate(candidate)
+				if err != nil {
+					log.Errorf("error adding ice candidate: %e", err)
+				}
+			} else {
+				candidates = append(candidates, candidate)
 			}
 		}
 	}
