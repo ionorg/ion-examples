@@ -5,12 +5,13 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
+	"github.com/pion/randutil"
 	"io"
-	"math/rand"
 	"os"
 	"time"
 
-	sfu "github.com/pion/ion-sfu/cmd/server/grpc/proto"
+	sfu "github.com/pion/ion-sfu/cmd/signal/grpc/proto"
 	"github.com/pion/ion-log"
 	"github.com/pion/webrtc/v3"
 	"github.com/pion/webrtc/v3/pkg/media"
@@ -28,7 +29,7 @@ const (
 )
 
 func main() {
-	log.Init("debug", []string{"proc.go", "asm_amd64.s", "jsonrpc2.go"})
+	log.Init("debug", []string{"proc.go", "asm_amd64.s", "jsonrpc2.go"}, []string{})
 
 	// Assert that we have an audio or video file
 	_, err := os.Stat(videoFileName)
@@ -55,7 +56,7 @@ func main() {
 	mediaEngine.RegisterDefaultCodecs()
 
 	// Create a new RTCPeerConnection
-	api := webrtc.NewAPI(webrtc.WithMediaEngine(mediaEngine))
+	api := webrtc.NewAPI(webrtc.WithMediaEngine(&mediaEngine))
 	peerConnection, err := api.NewPeerConnection(webrtc.Configuration{
 		ICEServers: []webrtc.ICEServer{
 			{
@@ -70,11 +71,16 @@ func main() {
 
 	if haveVideoFile {
 		// Create a video track
-		videoTrack, addTrackErr := peerConnection.NewTrack(webrtc.DefaultPayloadTypeVP8, rand.Uint32(), "video", "pion")
-		if addTrackErr != nil {
-			log.Panicf("Error new video track: %s\n", addTrackErr)
+		videoTrack, err := webrtc.NewTrackLocalStaticSample(
+			webrtc.RTPCodecCapability{MimeType: "video/vp8"},
+			fmt.Sprintf("video-%d", randutil.NewMathRandomGenerator().Uint32()),
+			fmt.Sprintf("video-%d", randutil.NewMathRandomGenerator().Uint32()),
+		)
+
+		if err != nil {
+			log.Panicf("Error new video track: %s\n", err)
 		}
-		if _, addTrackErr = peerConnection.AddTrack(videoTrack); err != nil {
+		if _, addTrackErr := peerConnection.AddTrack(videoTrack); err != nil {
 			log.Panicf("Error add video track: %s\n", addTrackErr)
 		}
 
@@ -109,7 +115,7 @@ func main() {
 				}
 
 				time.Sleep(sleepTime)
-				if ivfErr = videoTrack.WriteSample(media.Sample{Data: frame, Samples: 90000}); ivfErr != nil {
+				if ivfErr = videoTrack.WriteSample(media.Sample{Data: frame, Duration: time.Second}); ivfErr != nil {
 					log.Panicf("Error video track write sample: %s\n", ivfErr)
 				}
 				// packets := videoTrack.Packetizer().Packetize(frame, 90000)
@@ -126,11 +132,17 @@ func main() {
 
 	if haveAudioFile {
 		// Create a audio track
-		audioTrack, addTrackErr := peerConnection.NewTrack(webrtc.DefaultPayloadTypeOpus, rand.Uint32(), "audio", "pion")
-		if addTrackErr != nil {
-			log.Panicf("Error new audio track: %s\n", addTrackErr)
+
+		audioTrack, err := webrtc.NewTrackLocalStaticSample(
+		webrtc.RTPCodecCapability{MimeType: "video/vp8"},
+			fmt.Sprintf("video-%d", randutil.NewMathRandomGenerator().Uint32()),
+			fmt.Sprintf("video-%d", randutil.NewMathRandomGenerator().Uint32()),
+		)
+		if err != nil {
+			log.Panicf("Error new audio track: %s\n", err)
 		}
-		if _, addTrackErr = peerConnection.AddTrack(audioTrack); err != nil {
+
+		if _, addTrackErr := peerConnection.AddTrack(audioTrack); err != nil {
 			log.Panicf("Error add audio track: %s\n", addTrackErr)
 		}
 
@@ -167,7 +179,8 @@ func main() {
 				// The amount of samples is the difference between the last and current timestamp
 				sampleCount := float64((pageHeader.GranulePosition - lastGranule))
 				lastGranule = pageHeader.GranulePosition
-				if oggErr = audioTrack.WriteSample(media.Sample{Data: pageData, Samples: uint32(sampleCount)}); oggErr != nil {
+				duration := time.Duration(uint32(sampleCount) / 90000)
+				if oggErr = audioTrack.WriteSample(media.Sample{Data: pageData, Duration: duration * time.Second}); oggErr != nil {
 					log.Panicf("Error audio track write sample: %s\n", oggErr)
 				}
 
@@ -203,15 +216,16 @@ func main() {
 	}
 
 	log.Debugf("send offer:\n %s", offer.SDP)
+	send, err := json.Marshal(offer)
+	if err != nil {
+		log.Panicf("Error sending publish request: %v", err)
+	}
 	err = client.Send(
 		&sfu.SignalRequest{
 			Payload: &sfu.SignalRequest_Join{
 				Join: &sfu.JoinRequest{
 					Sid: sid,
-					Offer: &sfu.SessionDescription{
-						Type: offer.Type.String(),
-						Sdp:  []byte(offer.SDP),
-					},
+					Description: send,
 				},
 			},
 		},
@@ -274,26 +288,23 @@ func main() {
 		switch payload := res.Payload.(type) {
 		case *sfu.SignalReply_Join:
 			// Set the remote SessionDescription
-			log.Debugf("got answer: %s", string(payload.Join.Answer.Sdp))
-			if err = peerConnection.SetRemoteDescription(webrtc.SessionDescription{
-				Type: webrtc.SDPTypeAnswer,
-				SDP:  string(payload.Join.Answer.Sdp),
-			}); err != nil {
+			join := payload.Join
+			log.Debugf("got answer: %s", string(join.Description))
+			var desc webrtc.SessionDescription
+			err := json.Unmarshal(join.Description, &desc)
+			if err = peerConnection.SetRemoteDescription(desc); err != nil {
 				log.Errorf("join error %s", err)
 				return
 			}
 
-		case *sfu.SignalReply_Negotiate:
-			log.Debugf("got negotiate %s", payload.Negotiate.Type)
-			if payload.Negotiate.Type == webrtc.SDPTypeOffer.String() {
-				log.Debugf("got offer: %s", string(payload.Negotiate.Sdp))
-				offer := webrtc.SessionDescription{
-					Type: webrtc.SDPTypeOffer,
-					SDP:  string(payload.Negotiate.Sdp),
-				}
+		case *sfu.SignalReply_Description:
+			var desc webrtc.SessionDescription
+			err := json.Unmarshal(payload.Description, &desc)
+			if desc.Type == webrtc.SDPTypeOffer {
+				log.Debugf("got offer: %s", string(desc.SDP))
 
 				// Peer exists, renegotiating existing peer
-				err = peerConnection.SetRemoteDescription(offer)
+				err = peerConnection.SetRemoteDescription(desc)
 				if err != nil {
 					log.Errorf("negotiate error %s", err)
 					continue
@@ -312,12 +323,12 @@ func main() {
 					continue
 				}
 
+				answer.Type = webrtc.SDPTypeAnswer
+				send, _ := json.Marshal(answer)
+
 				err = client.Send(&sfu.SignalRequest{
-					Payload: &sfu.SignalRequest_Negotiate{
-						Negotiate: &sfu.SessionDescription{
-							Type: answer.Type.String(),
-							Sdp:  []byte(answer.SDP),
-						},
+					Payload: &sfu.SignalRequest_Description{
+						Description: send,
 					},
 				})
 
@@ -325,12 +336,9 @@ func main() {
 					log.Errorf("negotiate error %s", err)
 					continue
 				}
-			} else if payload.Negotiate.Type == webrtc.SDPTypeAnswer.String() {
-				log.Debugf("got answer: %s", string(payload.Negotiate.Sdp))
-				err = peerConnection.SetRemoteDescription(webrtc.SessionDescription{
-					Type: webrtc.SDPTypeAnswer,
-					SDP:  string(payload.Negotiate.Sdp),
-				})
+			} else if desc.Type == webrtc.SDPTypeAnswer {
+				log.Debugf("got answer: %s", string(desc.SDP))
+				err = peerConnection.SetRemoteDescription(desc)
 
 				if err != nil {
 					log.Errorf("negotiate error %s", err)
