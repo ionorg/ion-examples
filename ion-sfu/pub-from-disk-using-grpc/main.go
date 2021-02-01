@@ -257,7 +257,7 @@ func main() {
 		}
 	})
 
-	candidates := []webrtc.ICECandidateInit{}
+	earlyCandidates := []webrtc.ICECandidateInit{}
 
 	// Handle sfu stream messages
 	for {
@@ -309,11 +309,13 @@ func main() {
 				// Peer exists, renegotiating existing peer
 				err = peerConnection.SetRemoteDescription(desc)
 
-				for _, c := range candidates { // candidates that were received before offer
+				for _, c := range earlyCandidates { // earlyCandidates that were received before offer
 					if err := peerConnection.AddICECandidate(c); err != nil {
 						log.Errorf("Add publisher ice candidate to peer err: %v", err)
 					}
 				}
+				earlyCandidates = nil
+
 				if err != nil {
 					log.Errorf("negotiate error %s", err)
 					continue
@@ -364,7 +366,8 @@ func main() {
 					log.Errorf("error adding ice candidate: %e", err)
 				}
 			} else {
-				candidates = append(candidates, candidate)
+				log.Debugf("got candidate before remotedescription set, saving it for later...")
+				earlyCandidates = append(earlyCandidates, candidate)
 			}
 		}
 	}
