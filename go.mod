@@ -13,7 +13,7 @@ require (
 	github.com/pion/rtcp v1.2.6
 	github.com/pion/webrtc/v2 v2.2.26
 	github.com/pion/webrtc/v3 v3.0.1
-	github.com/sourcegraph/jsonrpc2 v0.0.0-20200429184054-15c2290dcb37
+	github.com/sourcegraph/jsonrpc2 v0.0.0-20210201082850-366fbb520750
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
 	google.golang.org/grpc v1.32.0
