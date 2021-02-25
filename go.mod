@@ -16,5 +16,5 @@ require (
 	github.com/sourcegraph/jsonrpc2 v0.0.0-20200429184054-15c2290dcb37
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
-	google.golang.org/grpc v1.32.0
+	google.golang.org/grpc v1.36.0
 )
