@@ -4,7 +4,7 @@ go 1.14
 
 require (
 	github.com/cloudwebrtc/go-protoo v0.0.0-20200926140535-79ecde67b906
-	github.com/google/uuid v1.1.2
+	github.com/google/uuid v1.2.0
 	github.com/gorilla/websocket v1.4.2
 	github.com/lherman-cs/opus v0.0.2 // indirect
 	github.com/pion/ion-log v1.0.0
